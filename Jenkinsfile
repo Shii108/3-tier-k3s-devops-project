@@ -7,7 +7,7 @@ pipeline {
         FRONTEND_IMAGE = "${DOCKERHUB_USER}/todo-frontend"
         IMAGE_TAG = "v${BUILD_NUMBER}"
         KUBE_NAMESPACE = "todo-app"
-        DISCORD_WEBHOOK_URL = credentials('https://discord.com/api/webhooks/1496207988690653395/Xh0QdeKE3Bw8aKQ2c3AdvJxGi40rrmN1NU07yRZTXaAyhJ1UYlJ-ab49hN2mRnDaXt2L')
+        DISCORD_WEBHOOK_URL = credentials('discord-webhook-url')
     }
 
     stages {

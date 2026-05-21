@@ -3,383 +3,339 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TaskFlow | Todo App</title>
+  <title>Tasks</title>
   <style>
-    :root {
-      --bg: #f3efe6;
-      --surface: #fffdf8;
-      --surface-soft: #f7f1e7;
-      --ink: #161616;
-      --muted: #5f5a52;
-      --line: #1c1c1c;
-      --accent: #ff8a65;
-      --accent-soft: #ffd8cc;
-      --blue: #9fd4ff;
-      --green: #b8efc8;
-      --shadow: 7px 7px 0 #161616;
-      --border: 4px solid #161616;
-      --radius: 18px;
-    }
-
-    * {
+    *, *::before, *::after {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      margin: 0;
       min-height: 100vh;
-      font-family: Verdana, Geneva, Tahoma, sans-serif;
-      background:
-        radial-gradient(circle at top left, rgba(0, 0, 0, 0.04) 0, rgba(0, 0, 0, 0.04) 6px, transparent 6px) 0 0 / 24px 24px,
-        var(--bg);
-      color: var(--ink);
-      padding: 32px 18px 48px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      background: #0e0e0e;
+      color: #e0e0e0;
+      line-height: 1.5;
     }
 
-    .shell {
-      width: min(960px, 100%);
+    .page {
+      max-width: 680px;
       margin: 0 auto;
-      display: grid;
-      gap: 22px;
+      padding: 56px 24px 100px;
     }
 
-    .hero,
-    .panel,
-    .task-card,
-    .empty-state {
-      border: var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-    }
-
-    .hero {
-      background: var(--surface);
-      padding: 26px;
-      display: grid;
-      gap: 14px;
-    }
-
-    .hero-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-      flex-wrap: wrap;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 14px;
-      border: 3px solid var(--line);
-      border-radius: 999px;
-      background: var(--accent-soft);
-      font-size: 0.78rem;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-    }
-
-    .badge.secondary {
-      background: var(--blue);
-    }
-
-    h1,
-    h2,
-    p {
-      margin: 0;
-    }
-
+    /* header */
     h1 {
-      font-size: clamp(2rem, 5vw, 3.4rem);
-      line-height: 1;
-      letter-spacing: -0.03em;
-      font-weight: 800;
-    }
-
-    .subtitle {
-      max-width: 62ch;
-      font-size: 1rem;
-      line-height: 1.6;
-      color: var(--muted);
-      font-weight: 500;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 1.25fr 0.75fr;
-      gap: 22px;
-    }
-
-    .panel {
-      background: var(--surface);
-      padding: 22px;
-    }
-
-    .panel h2 {
-      margin-bottom: 14px;
-      font-size: 1.1rem;
-      font-weight: 800;
-      letter-spacing: 0.02em;
-      text-transform: uppercase;
-    }
-
-    .composer {
-      display: grid;
-      gap: 12px;
-    }
-
-    .input-row {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    input {
-      flex: 1 1 260px;
-      min-width: 0;
-      padding: 15px 16px;
-      border: var(--border);
-      border-radius: 14px;
-      background: #ffffff;
-      color: var(--ink);
-      font-size: 0.98rem;
-      font-weight: 500;
-      outline: none;
-      box-shadow: 4px 4px 0 var(--line);
-    }
-
-    input::placeholder {
-      color: #7b746b;
-      font-weight: 500;
-    }
-
-    button {
-      border: var(--border);
-      border-radius: 14px;
-      padding: 14px 18px;
-      background: var(--accent);
-      color: var(--ink);
-      font-size: 0.92rem;
+      font-size: 2.2rem;
       font-weight: 700;
-      letter-spacing: 0.03em;
-      cursor: pointer;
-      box-shadow: 4px 4px 0 var(--line);
-      transition: transform 0.12s ease, box-shadow 0.12s ease;
+      color: #fff;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
     }
 
-    button:hover {
-      transform: translate(2px, 2px);
-      box-shadow: 2px 2px 0 var(--line);
+    .tagline {
+      font-size: 1.05rem;
+      color: #666;
+      margin-bottom: 40px;
     }
 
-    button:active {
-      transform: translate(4px, 4px);
-      box-shadow: none;
-    }
-
-    .danger {
-      background: #ffd3d0;
-    }
-
+    /* stats */
     .stats {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
+      display: flex;
+      gap: 1px;
+      background: #222;
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 24px;
     }
 
     .stat {
-      border: var(--border);
-      border-radius: 14px;
-      padding: 16px;
-      box-shadow: 4px 4px 0 var(--line);
-      background: var(--surface-soft);
-    }
-
-    .stat:nth-child(2) {
-      background: var(--green);
+      flex: 1;
+      padding: 20px 22px;
+      background: #161616;
     }
 
     .stat-label {
-      display: block;
-      margin-bottom: 8px;
-      font-size: 0.76rem;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      color: var(--muted);
+      font-size: 0.85rem;
+      color: #555;
+      margin-bottom: 6px;
     }
 
-    .stat-value {
+    .stat-num {
       font-size: 2rem;
-      font-weight: 800;
+      font-weight: 700;
       line-height: 1;
     }
 
-    .status-line {
-      min-height: 22px;
-      font-size: 0.92rem;
-      color: var(--muted);
-      font-weight: 600;
-    }
+    .stat-num.pend { color: #e8a44a; }
+    .stat-num.done { color: #5cbf78; }
 
-    .status-line.error {
-      color: #a12b23;
-    }
-
-    .list-wrap {
-      display: grid;
-      gap: 14px;
-      margin-top: 16px;
-    }
-
-    .task-card {
-      background: #ffffff;
-      padding: 16px 18px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-    }
-
-    .task-main {
+    /* progress */
+    .progress-row {
       display: flex;
       align-items: center;
       gap: 14px;
-      min-width: 0;
+      margin-bottom: 32px;
+    }
+
+    .progress-track {
       flex: 1;
+      height: 6px;
+      background: #1a1a1a;
+      border-radius: 3px;
+      overflow: hidden;
     }
 
-    .task-check {
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #e8a44a, #5cbf78);
+      border-radius: 3px;
+      transition: width 0.4s ease;
+    }
+
+    .progress-pct {
+      font-size: 0.95rem;
+      color: #555;
+      min-width: 36px;
+      text-align: right;
+    }
+
+    /* input */
+    .add-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .add-row input {
+      flex: 1;
+      height: 52px;
+      padding: 0 18px;
+      font: inherit;
+      font-size: 1.05rem;
+      color: #e0e0e0;
+      background: #161616;
+      border: 2px solid #252525;
+      border-radius: 12px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .add-row input::placeholder { color: #444; }
+    .add-row input:focus { border-color: #e8a44a; }
+
+    .add-row button {
+      height: 52px;
+      padding: 0 26px;
+      font: inherit;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #111;
+      background: #e8a44a;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .add-row button:hover { background: #f0b460; }
+    .add-row button:active { transform: scale(0.97); }
+    .add-row button:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+    /* status */
+    .status {
+      font-size: 0.92rem;
+      padding: 11px 16px;
+      border-radius: 10px;
+      margin-bottom: 28px;
+      background: rgba(92, 191, 120, 0.08);
+      color: #5cbf78;
+    }
+
+    .status:empty { display: none; }
+    .status.error { background: rgba(230, 80, 80, 0.08); color: #e65050; }
+    .status.loading { background: rgba(232, 164, 74, 0.08); color: #e8a44a; }
+
+    /* divider label */
+    .list-label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #444;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 14px;
+    }
+
+    /* task list */
+    .tasks {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .task {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 18px;
+      background: #161616;
+      border: 1px solid #222;
+      border-radius: 12px;
+      transition: border-color 0.15s, transform 0.15s;
+    }
+
+    .task:hover {
+      border-color: #333;
+      transform: translateY(-1px);
+    }
+
+    .task.done { opacity: 0.45; }
+    .task.done:hover { opacity: 0.6; }
+
+    /* checkbox */
+    .task input[type="checkbox"] {
       appearance: none;
       -webkit-appearance: none;
-      width: 24px;
-      height: 24px;
-      margin: 0;
-      border: 3px solid var(--line);
+      width: 22px;
+      height: 22px;
+      border: 2px solid #333;
       border-radius: 6px;
-      background: #fff;
+      background: transparent;
       cursor: pointer;
       flex-shrink: 0;
-      display: grid;
-      place-items: center;
+      position: relative;
+      transition: all 0.12s;
     }
 
-    .task-check:checked {
-      background: var(--green);
+    .task input[type="checkbox"]:hover { border-color: #e8a44a; }
+
+    .task input[type="checkbox"]:checked {
+      background: #5cbf78;
+      border-color: #5cbf78;
     }
 
-    .task-check:checked::after {
-      content: "✓";
-      font-size: 0.95rem;
-      font-weight: 800;
-      line-height: 1;
+    .task input[type="checkbox"]:checked::after {
+      content: '';
+      position: absolute;
+      left: 6px;
+      top: 2px;
+      width: 6px;
+      height: 11px;
+      border: solid #111;
+      border-width: 0 2.5px 2.5px 0;
+      transform: rotate(45deg);
     }
 
-    .task-text {
-      font-size: 1rem;
-      font-weight: 600;
-      line-height: 1.35;
+    .task-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .task-name {
+      font-size: 1.08rem;
+      font-weight: 500;
       word-break: break-word;
     }
 
-    .task-text.done {
+    .task-name.crossed {
       text-decoration: line-through;
-      color: var(--muted);
+      color: #555;
     }
 
-    .task-meta {
-      margin-top: 4px;
-      font-size: 0.78rem;
-      font-weight: 600;
-      letter-spacing: 0.03em;
-      text-transform: uppercase;
-      color: var(--muted);
+    .task-date {
+      font-size: 0.8rem;
+      color: #444;
+      margin-top: 3px;
     }
 
-    .task-actions {
-      display: flex;
-      gap: 10px;
+    .task .del {
+      font: inherit;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: #e65050;
+      background: rgba(230, 80, 80, 0.08);
+      border: none;
+      border-radius: 8px;
+      padding: 7px 14px;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.15s, background 0.15s;
       flex-shrink: 0;
     }
 
-    .task-actions button {
-      min-width: 108px;
-      padding: 12px 14px;
-      font-size: 0.82rem;
-    }
+    .task:hover .del { opacity: 1; }
+    .task .del:hover { background: rgba(230, 80, 80, 0.16); }
 
-    .empty-state {
-      background: #ffffff;
-      padding: 26px 18px;
+    /* empty */
+    .empty {
       text-align: center;
-      font-weight: 700;
-      color: var(--muted);
+      padding: 52px 20px;
+      color: #444;
+      border: 2px dashed #222;
+      border-radius: 14px;
     }
 
-    @media (max-width: 780px) {
-      .grid {
-        grid-template-columns: 1fr;
-      }
+    .empty-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #666;
+      margin-bottom: 6px;
+    }
 
-      .task-card {
-        flex-direction: column;
-        align-items: stretch;
-      }
+    .empty-sub {
+      font-size: 0.95rem;
+    }
 
-      .task-actions {
-        justify-content: flex-end;
-      }
+    /* mobile */
+    @media (max-width: 520px) {
+      .page { padding: 36px 16px 60px; }
+      h1 { font-size: 1.7rem; }
+      .stats { flex-direction: column; }
+      .add-row { flex-direction: column; }
+      .add-row button { width: 100%; }
+      .task .del { opacity: 1; }
     }
   </style>
 </head>
 <body>
-  <main class="shell">
-    <section class="hero">
-      <div class="hero-top">
-        <span class="badge">TaskFlow</span>
-        <span class="badge secondary">3-Tier Todo System</span>
+  <div class="page">
+    <h1>Tasks</h1>
+    <p class="tagline">Track what needs to get done</p>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-label">Total</div>
+        <div class="stat-num" id="totalCount">0</div>
       </div>
-
-      <h1>Task Management Dashboard</h1>
-      <p class="subtitle">
-        A simple web-based task management system connected to backend API and PostgreSQL database.
-      </p>
-    </section>
-
-    <section class="grid">
-      <div class="panel">
-        <h2>Add New Task</h2>
-        <div class="composer">
-          <div class="input-row">
-            <input id="taskInput" placeholder="Enter task title" />
-            <button id="addButton" type="button">Add Task</button>
-          </div>
-          <p id="statusMessage" class="status-line"></p>
-        </div>
+      <div class="stat">
+        <div class="stat-label">Pending</div>
+        <div class="stat-num pend" id="pendingCount">0</div>
       </div>
+      <div class="stat">
+        <div class="stat-label">Done</div>
+        <div class="stat-num done" id="doneCount">0</div>
+      </div>
+    </div>
 
-      <aside class="panel">
-        <h2>Overview</h2>
-        <div class="stats">
-          <div class="stat">
-            <span class="stat-label">Total Tasks</span>
-            <span id="totalCount" class="stat-value">0</span>
-          </div>
-          <div class="stat">
-            <span class="stat-label">Completed</span>
-            <span id="doneCount" class="stat-value">0</span>
-          </div>
-        </div>
-      </aside>
-    </section>
+    <div class="progress-row">
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <span class="progress-pct" id="completionRate">0%</span>
+    </div>
 
-    <section class="panel">
-      <h2>Task List</h2>
-      <div id="taskList" class="list-wrap"></div>
-    </section>
-  </main>
+    <div class="add-row">
+      <input type="text" id="taskInput" placeholder="What needs to be done?" autocomplete="off" spellcheck="false" />
+      <button id="addButton" type="button">Add task</button>
+    </div>
+
+    <p id="statusMessage" class="status"></p>
+
+    <div class="list-label">Your tasks</div>
+    <div id="taskList" class="tasks"></div>
+  </div>
 
   <script src="app.js"></script>
 </body>

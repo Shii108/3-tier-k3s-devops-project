@@ -7,6 +7,7 @@ pipeline {
         FRONTEND_IMAGE = "${DOCKERHUB_USER}/todo-frontend"
         IMAGE_TAG = "v${BUILD_NUMBER}"
         KUBE_NAMESPACE = "todo-app"
+        DISCORD_WEBHOOK_URL = credentials('https://discord.com/api/webhooks/1496207988690653395/Xh0QdeKE3Bw8aKQ2c3AdvJxGi40rrmN1NU07yRZTXaAyhJ1UYlJ-ab49hN2mRnDaXt2L')
     }
 
     stages {
@@ -54,10 +55,38 @@ pipeline {
 
     post {
         success {
-            echo 'CI/CD pipeline completed successfully.'
+            discordSend(
+                webhookURL: env.DISCORD_WEBHOOK_URL,
+                title: 'Build Succeeded',
+                description: """**Job:** ${env.JOB_NAME ?: 'unknown'}
+**Build:** #${env.BUILD_NUMBER ?: 'unknown'}
+**Version:** ${env.IMAGE_TAG ?: 'unknown'}
+**Status:** SUCCESS
+**Branch:** ${env.GIT_BRANCH ?: 'unknown'}
+**Commit:** ${env.GIT_COMMIT ? env.GIT_COMMIT.take(7) : 'unknown'}
+**Repo:** ${env.GIT_URL ?: 'unknown'}""",
+                footer: 'Jenkins CI',
+                link: env.BUILD_URL,
+                result: 'SUCCESS',
+                showChangeset: true
+            )
         }
         failure {
-            echo 'CI/CD pipeline failed.'
+            discordSend(
+                webhookURL: env.DISCORD_WEBHOOK_URL,
+                title: 'Build Failed',
+                description: """**Job:** ${env.JOB_NAME ?: 'unknown'}
+**Build:** #${env.BUILD_NUMBER ?: 'unknown'}
+**Version:** ${env.IMAGE_TAG ?: 'unknown'}
+**Status:** FAILURE
+**Branch:** ${env.GIT_BRANCH ?: 'unknown'}
+**Commit:** ${env.GIT_COMMIT ? env.GIT_COMMIT.take(7) : 'unknown'}
+**Repo:** ${env.GIT_URL ?: 'unknown'}""",
+                footer: 'Jenkins CI',
+                link: env.BUILD_URL,
+                result: 'FAILURE',
+                showChangeset: true
+            )
         }
     }
 }

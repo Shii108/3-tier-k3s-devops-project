@@ -22,7 +22,7 @@ function setStatus(msg, isError, isLoading) {
 function formatDate(value) {
   var d = new Date(value);
   if (Number.isNaN(d.getTime())) return "just now";
-  return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+  return d.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
 }
 
 function renderTasks(tasks) {
@@ -63,9 +63,14 @@ function renderTasks(tasks) {
     name.className = task.completed ? "task-name crossed" : "task-name";
     name.textContent = task.title;
 
+    var status = document.createElement("span");
+    status.className = task.completed ? "task-status task-status-done" : "task-status task-status-pending";
+    status.textContent = task.completed ? "Completed" : "Pending";
+
     var date = document.createElement("div");
     date.className = "task-date";
-    date.textContent = formatDate(task.created_at);
+    date.appendChild(status);
+    date.appendChild(document.createTextNode(" \u2022 " + formatDate(task.created_at)));
 
     body.appendChild(name);
     body.appendChild(date);

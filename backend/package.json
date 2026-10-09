@@ -1,0 +1,16 @@
+{
+  "name": "todo-backend",
+  "version": "1.0.0",
+  "description": "Simple backend API for 3-tier Kubernetes project",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "lint": "node --check app.js && node --check server.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "pg": "^8.11.3"
+  }
+}

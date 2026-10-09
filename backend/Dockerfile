@@ -3,9 +3,11 @@ FROM node:20-alpine
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm install
+RUN npm ci --omit=dev && npm cache clean --force
 
-COPY . .
+COPY --chown=node:node app.js server.js ./
+
+USER node
 
 EXPOSE 5000
 
